@@ -11,6 +11,7 @@
             margin: 20px auto;
             padding: 20px;
         }
+
         .password-section,
         .wishlist-section {
             margin: 20px 0;
@@ -18,6 +19,7 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
         input,
         button {
             margin: 5px 0;
@@ -43,11 +45,11 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
 
     <script>
-        // 替换为你的Firebase配置
+        // 替换为你的 Firebase 配置
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_AUTH_DOMAIN",
@@ -76,7 +78,6 @@
             if (link) {
                 database.ref('wishlist').push(link);
                 document.getElementById('productLink').value = '';
-                loadWishlist();
             } else {
                 alert('请输入商品链接！');
             }
@@ -88,8 +89,16 @@
             database.ref('wishlist').on('value', (snapshot) => {
                 snapshot.forEach((childSnapshot) => {
                     const link = childSnapshot.val();
+                    const key = childSnapshot.key;
                     const listItem = document.createElement('li');
                     listItem.textContent = link;
+                    // 创建删除按钮并绑定点击事件
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '删除';
+                    deleteButton.onclick = function () {
+                        database.ref('wishlist/' + key).remove(); // 删除对应节点
+                    };
+                    listItem.appendChild(deleteButton);
                     list.appendChild(listItem);
                 });
             });
